@@ -1,4 +1,4 @@
-package Hearts
+package main
 
 import (
 	"fmt"
@@ -77,13 +77,14 @@ func NewDeck () []Card {
 	return arr[0:len(arr)-1]
 }
 
-func New () Game {
+func NewGame () Game {
 	players := new ([4]Player)
 	trick := new ([4]Card)
 	deck := NewDeck()
 
 	i, j := 0, 12
 	for k, _ := range(players) {
+		players[k].Hand = make(map[Card]struct{})
 		for _, card := range(deck[i:j]) {
 			players[k].Hand[card] = struct{}{}
 		}
@@ -129,7 +130,7 @@ func ( game *Game ) Play (move Move) (err error) {
 	if err, ok := game.ValidMove(move); !ok {
 		return err
 	}
-	game.Trick[move.Side] = move.Card
+	game.Trick = append(game.Trick, move.Card)
 	delete(game.Players[move.Side].Hand, move.Card)
 
 	if len(game.Trick) == 4 {
@@ -141,13 +142,14 @@ func ( game *Game ) Play (move Move) (err error) {
 	return
 }
 
+// TODO : Side does not correlate with trick position
 func ( game *Game ) Score () () {
 	leader := game.ToPlay.Next()
-	lead := game.Trick[leader]
+	lead := game.Trick[0]
 	// determine the winner of the trick
 	for side, card := range(game.Trick) {
 		if card.Suit == lead.Suit && card.Value > lead.Value {
-			leader, lead = Side(side), card
+			leader, lead = Side(leader + side), card
 		}
 	}
 	// move the cards to that player's points
@@ -175,7 +177,7 @@ func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
 	}
 
 	// are you following the trick, if able?
-	if move.Card.Suit != game.Trick[0].Suit {
+	if len(game.Trick) > 0 && move.Card.Suit != game.Trick[0].Suit {
 		for card, _ := range(player.Hand) {
 			if card.Suit == game.Trick[0].Suit {
 				err = errors.New(fmt.Sprintf("%s is able to follow trick", move.Side))
