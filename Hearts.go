@@ -144,12 +144,19 @@ func ( side Side ) Next () Side {
 func ( game *Game ) Score () () {
 	leader := game.ToPlay.Next()
 	lead := game.Trick[leader]
+	// determine the winner of the trick
 	for side, card := range(game.Trick) {
 		if card.Suit == lead.Suit && card.Value > lead.Value {
-			leader, lead = side, card
+			leader, lead = Side(side), card
 		}
 	}
-	
+	// move the cards to that player's points
+	points := game.Players[leader].Points
+	for _, card := range(game.Trick) {
+		points[card] = struct{}{}
+	}
+	// reset the trick
+	game.Trick = game.Trick[0:0]
 }
 
 func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
