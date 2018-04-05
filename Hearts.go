@@ -117,9 +117,17 @@ func StartingPlayer (players []Player) Side {
 	panic ("No valid starting player")
 }
 
-func ( game *Game ) Play (move Move) (state Game, err error) {
+func ( side Side ) Next () Side {
+	if side == West {
+		return North
+	} else {
+		return side + 1
+	}
+}
+
+func ( game *Game ) Play (move Move) (err error) {
 	if err, ok := game.ValidMove(move); !ok {
-		return state, err
+		return err
 	}
 	game.Trick[move.Side] = move.Card
 	delete(game.Players[move.Side].Hand, move.Card)
@@ -131,14 +139,6 @@ func ( game *Game ) Play (move Move) (state Game, err error) {
 	}
 
 	return
-}
-
-func ( side Side ) Next () Side {
-	if side == West {
-		return North
-	} else {
-		return side + 1
-	}
 }
 
 func ( game *Game ) Score () () {
