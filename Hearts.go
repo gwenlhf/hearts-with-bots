@@ -46,8 +46,8 @@ type Card struct {
 
 type Player struct {
 	Side Side
-	Hand map[Card]struct{}
-	Points map[Card]struct{}
+	Hand []Card
+	Points []Card
 	Total int16
 }
 
@@ -84,13 +84,11 @@ func NewGame () Game {
 
 	i, j := 0, 13
 	for k, _ := range(players) {
-		players[k].Hand = make(map[Card]struct{})
-		for _, card := range(deck[i:j]) {
-			players[k].Hand[card] = struct{}{}
+		players[k] = Player{
+			Side(k),
+			deck[i:j],
+			0,
 		}
-		players[k].Side = Side(k)
-		players[k].Points = make(map[Card]struct{})
-		players[k].Total = 0
 		i += 13
 		j += 13
 	}
@@ -109,7 +107,7 @@ func NewGame () Game {
 
 func StartingPlayer (players []Player) Side {
 	for _, player := range(players) {
-		for card, _ := range(player.Hand) {
+		for _, card := range(player.Hand) {
 			if card.Suit == Clubs && card.Value == Two {
 				return player.Side
 			}
@@ -175,14 +173,20 @@ func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
 	player := game.Players[move.Side]
 
 	// do you have the card?
-	if _, ok := player.Hand[move.Card]; !ok {
+	hasCard := false
+	for _, card := range(player.Hand) {
+		if card == move.Card {
+			hasCard = true
+		}
+	}
+	if !hasCard {
 		err = errors.New(fmt.Sprintf("%s does not have card %s", move.Side, move.Card))
 		return err, false
 	}
 
 	// are you following the trick, if able?
 	if len(game.Trick) > 0 && move.Card.Suit != game.Trick[0].Suit {
-		for card, _ := range(player.Hand) {
+		for _, card := range(player.Hand) {
 			if card.Suit == game.Trick[0].Suit {
 				err = errors.New(fmt.Sprintf("%s is able to follow trick", move.Side))
 				return err, false
@@ -192,7 +196,7 @@ func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
 
 	// if breaking hearts, are you legally able to?
 	if !game.HeartsBroken && (move.Card.Suit == Hearts || move.Card == Card{Spades,Queen}) {
-		for card, _ := range(player.Hand) {
+		for _, card := range(player.Hand) {
 			if card.Suit != Hearts && (card != Card{Spades,Queen}) {
 				err = errors.New(fmt.Sprintf("%s cannot break hearts yet", move.Side))
 				return err, false
