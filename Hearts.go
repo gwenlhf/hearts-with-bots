@@ -126,12 +126,15 @@ func ( game *Game ) Play (move Move) (err error) {
 		return err
 	}
 	game.Trick = append(game.Trick, move.Card)
+
+	// find and remove card from hand
 	hand := game.Players[move.Side].Hand
 	for i, card := range(hand) {
 		if card == move.Card {
 			hand = append(hand[:i], hand[i+1:]...)
 		}
 	}
+
 	if len(game.Trick) == 4 {
 		game.Score()
 	} else {
@@ -166,6 +169,8 @@ func ( game *Game ) Score () () {
 	if leadplayer.Total == 26 {
 		leadplayer.Total = -26
 	}
+	// set next player to winner
+	game.ToPlay = leadplayer.Side
 }
 
 func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
