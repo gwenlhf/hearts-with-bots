@@ -82,7 +82,7 @@ func NewGame () Game {
 	trick := new ([4]Card)
 	deck := NewDeck()
 
-	i, j := 0, 12
+	i, j := 0, 13
 	for k, _ := range(players) {
 		players[k].Hand = make(map[Card]struct{})
 		for _, card := range(deck[i:j]) {
@@ -95,10 +95,10 @@ func NewGame () Game {
 		j += 13
 	}
 	game := Game{
-		players[0:3],
+		players[0:4],
 		trick[0:0],
 		false,
-		StartingPlayer(players[0:3]),
+		StartingPlayer(players[0:4]),
 	}
 	game.Play(Move{
 		game.ToPlay,
@@ -118,12 +118,8 @@ func StartingPlayer (players []Player) Side {
 	panic ("No valid starting player")
 }
 
-func ( side Side ) Next () Side {
-	if side == West {
-		return North
-	} else {
-		return side + 1
-	}
+func ( side Side ) Next ( n int ) Side {
+	return Side(((int(side) + n) % 4))
 }
 
 func ( game *Game ) Play (move Move) (err error) {
@@ -136,29 +132,37 @@ func ( game *Game ) Play (move Move) (err error) {
 	if len(game.Trick) == 4 {
 		game.Score()
 	} else {
-		game.ToPlay = game.ToPlay.Next()
+		game.ToPlay = game.ToPlay.Next(1)
 	}
 
 	return
 }
 
-// TODO : Side does not correlate with trick position
 func ( game *Game ) Score () () {
-	leader := game.ToPlay.Next()
+	leader := game.ToPlay.Next(1)
 	lead := game.Trick[0]
 	// determine the winner of the trick
-	for side, card := range(game.Trick) {
+	for i, card := range(game.Trick) {
 		if card.Suit == lead.Suit && card.Value > lead.Value {
-			leader, lead = Side(leader + side), card
+			leader, lead = leader.Next(i), card
 		}
 	}
 	// move the cards to that player's points
-	points := game.Players[leader].Points
+	leadplayer := game.Players[leader]
 	for _, card := range(game.Trick) {
-		points[card] = struct{}{}
+		leadplayer.Points[card] = struct{}{}
+		if card.Suit == Hearts {
+			leadplayer.Total += 1
+		} else if (card == Card{Spades,Queen}) {
+			leadplayer.Total += 13
+		}
 	}
 	// reset the trick
 	game.Trick = game.Trick[0:0]
+	// handle moonshots
+	if leadplayer.Total == 26 {
+		leadplayer.Total = -26
+	}
 }
 
 func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
