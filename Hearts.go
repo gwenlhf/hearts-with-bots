@@ -87,6 +87,7 @@ func NewGame () Game {
 		players[k] = Player{
 			Side(k),
 			deck[i:j],
+			(new ([52]Card))[0:0],
 			0,
 		}
 		i += 13
@@ -125,8 +126,12 @@ func ( game *Game ) Play (move Move) (err error) {
 		return err
 	}
 	game.Trick = append(game.Trick, move.Card)
-	delete(game.Players[move.Side].Hand, move.Card)
-
+	hand := game.Players[move.Side].Hand
+	for i, card := range(hand) {
+		if card == move.Card {
+			hand = append(hand[:i], hand[i+1:]...)
+		}
+	}
 	if len(game.Trick) == 4 {
 		game.Score()
 	} else {
@@ -148,7 +153,7 @@ func ( game *Game ) Score () () {
 	// move the cards to that player's points
 	leadplayer := game.Players[leader]
 	for _, card := range(game.Trick) {
-		leadplayer.Points[card] = struct{}{}
+		leadplayer.Points = append(leadplayer.Points, card)
 		if card.Suit == Hearts {
 			leadplayer.Total += 1
 		} else if (card == Card{Spades,Queen}) {
