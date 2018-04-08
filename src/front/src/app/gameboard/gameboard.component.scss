@@ -1,5 +1,5 @@
 .hand {
-	display: grid;
+	display: block;
 }
 
 .west {
@@ -35,4 +35,8 @@
 
 .board {
 	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	grid-template-rows: 50px;
+	grid-template-columns: 50px;
 }

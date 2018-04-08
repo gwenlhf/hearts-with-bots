@@ -1,12 +1,8 @@
 <div class="board">
 	<div *ngFor="let player of Model.Players" class="hand {{player.Side | gameSide | lowercase}}">
-		{{player.Side | gameSide}}:
-		<app-game-card *ngFor="let card of player.Hand" [model]="card">
-		</app-game-card>
+	<app-game-card *ngFor="let card of player.Hand" [model]="card"></app-game-card>
 	</div>
 	<div class="trick">
-		Trick:
-		<app-game-card *ngFor="let card of Model.Trick" [model]="card">
-		</app-game-card>
+		<app-game-card *ngFor="let card of Model.Trick" [model]="card"></app-game-card>
 	</div>
 </div>
