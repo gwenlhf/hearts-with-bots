@@ -7,7 +7,7 @@ import { RulesService } from '../rules.service';
 @Component({
   selector: 'app-gameboard',
   templateUrl: './gameboard.component.html',
-  styleUrls: ['./gameboard.component.css']
+  styleUrls: ['./gameboard.component.scss']
 })
 export class GameboardComponent implements OnInit {
 	Model : Game;

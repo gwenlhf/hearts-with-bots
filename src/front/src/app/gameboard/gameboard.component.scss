@@ -1,0 +1,38 @@
+.hand {
+	display: grid;
+}
+
+.west {
+	grid-column: 1;
+	grid-row-start: 2;
+	grid-row-end: 4;
+}
+
+.east {
+	grid-column: 4;
+	grid-row-start: 2;
+	grid-row-end: 4;
+}
+
+.north {
+	grid-column-start: 2;
+	grid-column-end: 4;
+	grid-row: 1;
+}
+
+.south {
+	grid-column-start: 2;
+	grid-column-end: 4;
+	grid-row: 4;
+}
+
+.trick {
+	grid-row-start: 2;
+	grid-column-start: 2;
+	grid-row-end: 4;
+	grid-column-end: 4;
+}
+
+.board {
+	display: grid;
+}

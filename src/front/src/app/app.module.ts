@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { GameboardComponent } from './gameboard/gameboard.component';
 import { GameCardComponent } from './game-card/game-card.component';
 import { GameSidePipe } from './game-side.pipe';
+import { UnicardPipe } from './unicard.pipe';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { GameSidePipe } from './game-side.pipe';
     AppComponent,
     GameboardComponent,
     GameCardComponent,
-    GameSidePipe
+    GameSidePipe,
+    UnicardPipe
   ],
   imports: [
     BrowserModule

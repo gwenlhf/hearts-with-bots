@@ -1,5 +1,5 @@
 <div class="board">
-	<div *ngFor="let player of Model.Players" class="hand-{{player.Side | gameSide | lowercase}}">
+	<div *ngFor="let player of Model.Players" class="hand {{player.Side | gameSide | lowercase}}">
 		{{player.Side | gameSide}}:
 		<app-game-card *ngFor="let card of player.Hand" [model]="card">
 		</app-game-card>
