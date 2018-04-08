@@ -1,0 +1,13 @@
+<div class="board">
+	<div *ngFor="let player of Model.Players">
+		{{player.Side}}:
+		<div *ngFor="let card of player.Hand">
+			{{Value[card.Value]}} of {{Suit[card.Suit]}}
+		</div>
+	</div>
+	<div class="trick">
+		<div *ngFor="let card of Model.Trick">
+			{{Value[card.Value]}} of {{Suit[card.Suit]}}
+		</div>
+	</div>
+</div>
