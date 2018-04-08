@@ -31,12 +31,14 @@
 	grid-column-start: 2;
 	grid-row-end: 4;
 	grid-column-end: 4;
+	padding-top: 40%;
 }
 
 .board {
 	display: grid;
-	width: 100%;
-	margin: 0 auto;
-	grid-template-rows: 50px;
-	grid-template-columns: 50px;
+	width: 80%;
+	margin: 0 20%;
+	text-align: center;
+	grid-template-rows: 50px 25% 25% 50px;
+	grid-template-columns: 50px 25% 25% 50px;
 }
