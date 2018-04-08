@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Suit, Value } from '../game.constants';
 import { Game } from '../game';
+import { Side } from '../game.constants';
+import { GameSidePipe } from '../game-side.pipe';
 import { RulesService } from '../rules.service';
 
 @Component({
