@@ -9,11 +9,16 @@ import h5py
 import time
 from tempfile import TemporaryFile
 
-save_path = './model/dnn/weights.h5'
+save_path = './model/dnn/weights_4.h5'
 
 training_path = './train/'
 
 def main():
+	# batchConvertTrainingJson('../rules/train')
+	trainModel()
+	# print(predictMove(json.loads(sample_game_json)))
+
+def trainModel():
 	model = loadModel()
 
 	traindata = np.load("%s%sdata.npz" % (training_path, "mick"))["arr_0"]
@@ -21,38 +26,50 @@ def main():
 	traindata = np.reshape(traindata, (10010, 53, 3))
 	targedata = np.reshape(targedata, (10010, 52))
 
-	model.fit(traindata, targedata)
+	model.fit(traindata, targedata, batch_size=10)
 	model.save_weights(save_path)
 
 def loadModel():
 	model = tf.keras.Sequential()
-	model.add(tf.keras.layers.Flatten(
-		input_shape=(53, 3)))
-	model.add(tf.keras.layers.Dense(2756,
+	model.add(tf.keras.layers.InputLayer(batch_input_shape=(10,53,3)))
+	model.add(tf.keras.layers.Flatten())
+	model.add(tf.keras.layers.Dense(11024,
 		activation='softmax'))
+	model.add(tf.keras.layers.Dense(5512))
+	model.add(tf.keras.layers.Dense(2756))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
 	model.add(tf.keras.layers.Dense(689))
 	model.add(tf.keras.layers.Dense(52))
+	model.add(tf.keras.layers.Dropout(0.5))
 	model.compile(
 		optimizer='rmsprop',
 		loss='binary_crossentropy',
 		metrics=['accuracy'])
-	model.load_weights(save_path)
+	# model.load_weights(save_path)
 	return model
 
+def signb(b):
+	return 1 if b else -1
+
 def batchConvertTrainingJson(traindir, num=1001):
-	mick = np.empty((num, 10, 53, 3), type(True))
-	rock = np.empty((num, 10, 52), type(True))
+	mick = np.empty((num, 10, 53, 3), np.int8)
+	rock = np.empty((num, 10, 52), np.int8)
 	for i in range(1, num):
 		trstr = "%s%s%d" % (traindir, "/mick", i)
 		tastr = "%s%s%d" % (traindir, "/rock", i)
 		try:
+			vs = np.vectorize(signb)
 			traindata = open(trstr, 'r')
 			targedata = open(tastr, 'r')
 			trdata = json.load(traindata)[10:]
-			tr = np.array(trdata)
+			tr = vs(np.array(trdata))
 			mick[i-1] = tr
 			tadata = json.load(targedata)[10:]
-			ta = np.array(tadata)
+			ta = vs(np.array(tadata))
 			rock[i-1] = ta
 		except Exception as e:
 			print(e)
@@ -177,7 +194,7 @@ def unflattenMove(obj, side):
 	for i in range(len(obj)):
 		if obj[i] == top:
 			card["Suit"] = i / 13
-			card["Value"] = k % 13
+			card["Value"] = i % 13
 	return {
 		"Side":side,
 		"Card":card
@@ -222,6 +239,16 @@ def validMoves(game, exclude=False):
 	if exclude:
 		return [x for x in hand if x["canMove"]]
 	return hand
+
+def playGameDemo(ng=newGame, mv=wrapMove, model=loadModel()):
+	game = ng()
+
+def predictMove(game, model=loadModel()):
+	s = game["ToPlay"]
+	ia = np.empty((10,53,3))
+	ia[0] = flattenGame(game)
+	fm = model.predict(ia, batch_size=10)
+	return unflattenMove(fm[0], s)
 
 if __name__ == "__main__":
 	main()
