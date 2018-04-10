@@ -11,7 +11,7 @@ type GameMoveWrapper struct {
 	Move Move
 }
 
-
+type ErrorObject struct {}
 /*func webSocketHandler (w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -34,23 +34,34 @@ func newGameHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func gameMoveHandler (w http.ResponseWriter, r *http.Request) {
-	var rbody []byte
-	q, err := r.Body.Read(rbody)
-	if q == 0 || err != nil {
-		log.Println(err)
-		return
-	}
 	var objbod GameMoveWrapper
-	err = json.Unmarshal(rbody, &objbod)
+	err := json.NewDecoder(r.Body).Decode(&objbod)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(500)
+		by, _ := json.Marshal(new(ErrorObject))
+		w.Write(by)
 		return
 	}
 	err = objbod.Game.Play(objbod.Move)
 	if err != nil {
+		w.WriteHeader(400)
+		by, _ := json.Marshal(new(ErrorObject))
+		w.Write(by)
 		log.Println(err)
 		return
 	}
+	w.WriteHeader(200)
+	by, err := json.Marshal(objbod.Game)
+	if err != nil {
+		w.Write(by)
+		w.WriteHeader(500)
+		by, _ := json.Marshal(new(ErrorObject))
+		w.Write(by)
+		log.Println(err)
+		return
+	}
+	w.Write(by)
 	return
 }
 
