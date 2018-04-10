@@ -12,16 +12,7 @@ type GameMoveWrapper struct {
 }
 
 type ErrorObject struct {}
-/*func webSocketHandler (w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	defer c.Close()
-	c.WriteMessage(websocket.TextMessage, []byte("it worked?"))
-	return
-}*/
+
 
 func newGameHandler (w http.ResponseWriter, r *http.Request) {
 	by, err := json.Marshal(NewGame())
@@ -66,10 +57,11 @@ func gameMoveHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/new", newGameHandler)
+	/*http.HandleFunc("/new", newGameHandler)
 	http.HandleFunc("/mov", gameMoveHandler)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("shit: ", err)
-	}
+	}*/
+	createTrainingData(1000)
 }

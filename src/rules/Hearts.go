@@ -201,7 +201,7 @@ func ( game *Game ) ValidMove (move Move) (err error, ok bool) {
 	if len(game.Trick) > 0 && move.Card.Suit != game.Trick[0].Suit {
 		for _, card := range(player.Hand) {
 			if card.Suit == game.Trick[0].Suit {
-				err = errors.New(fmt.Sprintf("%s is able to follow trick", move.Side))
+				err = errors.New(fmt.Sprintf("%s is able to follow trick (Trick=%s)", move.Side, game.Trick))
 				return err, false
 			}
 		}
