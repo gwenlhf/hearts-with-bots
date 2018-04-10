@@ -30,10 +30,10 @@ func webSocketHandler (w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	game := NewGame()
-	fmt.Print(json.Marshal(game))
+	fmt.Print(json.Marshal(game))/*
 	http.HandleFunc("/ws", webSocketHandler)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("shit: ", err)
-	}
+	}*/
 }

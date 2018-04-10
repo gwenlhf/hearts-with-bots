@@ -131,7 +131,10 @@ func ( game *Game ) Play (move Move) (err error) {
 	hand := game.Players[move.Side].Hand
 	for i, card := range(hand) {
 		if card == move.Card {
-			hand = append(hand[:i], hand[i+1:]...)
+			hand[i] = hand[len(hand)-1]
+			// probably a cleaner way to do this with pointers
+			game.Players[move.Side].Hand = hand[:len(hand)-1]
+			break
 		}
 	}
 
