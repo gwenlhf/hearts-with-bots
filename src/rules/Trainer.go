@@ -15,7 +15,7 @@ const batchsize int16 = 10
 type FlatGame [53][3]bool
 type FlatMove [52]bool
 
-func createTrainingData(capacity int) {
+func CreateTrainingData(capacity int) {
 	for capacity > 0 {
 		mick, rock := new([batchsize]FlatGame)[:], new([batchsize]FlatMove)[:]
 		for i := int16(0); i < batchsize; i++ {
@@ -103,16 +103,23 @@ func ( game *Game ) copyTotals () (res []int16) {
 }
 
 func ( game *Game ) Save () (g Game) {
+	g = NewGame()
 	for i, p := range(game.Players) {
 		g.Players[i] = Player{
 			p.Side,
-			p.Hand[:],
-			p.Points[:],
+			new([13]Card)[0:0],
+			new([52]Card)[0:0],
 			p.Total,
 		}
+		if len(p.Hand) > 0 {
+			g.Players[i].Hand = append(g.Players[i].Hand, 
+				p.Hand[0:len(p.Hand)-1]...)
+		}
+		if len(p.Points) > 0 {
+			g.Players[i].Points = append(g.Players[i].Points, 
+				p.Points[0:len(p.Points)-1]...)
+		}
 	}
-	g.Trick = game.Trick[:]
-	g.HeartsBroken = game.HeartsBroken
-	g.ToPlay = game.ToPlay
+	g.Trick = game.Trick[0:len(game.Trick)-1]
 	return
 }

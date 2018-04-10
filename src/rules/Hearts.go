@@ -99,10 +99,6 @@ func NewGame () Game {
 		false,
 		StartingPlayer(players[0:4]),
 	}
-	game.Play(Move{
-		game.ToPlay,
-		Card{Clubs, Two},
-	})
 	return game
 }
 

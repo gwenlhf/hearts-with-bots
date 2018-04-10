@@ -15,7 +15,12 @@ type ErrorObject struct {}
 
 
 func newGameHandler (w http.ResponseWriter, r *http.Request) {
-	by, err := json.Marshal(NewGame())
+	game := NewGame()
+	game.Play(Move{
+		game.ToPlay,
+		Card{Clubs, Two},
+	})
+	by, err := json.Marshal(game)
 	if err != nil {
 		log.Println(err)
 		return
@@ -63,5 +68,5 @@ func main() {
 	if err != nil {
 		log.Fatal("shit: ", err)
 	}*/
-	createTrainingData(1000)
+	CreateTrainingData(1000)
 }
