@@ -1,5 +1,5 @@
 
-for /l %%x in (987,-5,1) do (
-	"Hearts.exe --trainter%%x"
-	SLEEP 3
+for /l %%x in (987,-4,1) do (
+	rules.exe --trainter%%x
+	SLEEP 5
 	)

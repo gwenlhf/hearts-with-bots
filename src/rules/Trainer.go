@@ -18,55 +18,52 @@ type FlatMove [52]bool
 
 
 func CreateTrainingData(capacity int) error {
-	for capacity > (capacity-5) {
-		mick, rock := new([batchsize]FlatGame)[:], new([batchsize]FlatMove)[:]
-		for i := int16(0); i < batchsize; i++ {
-			game := NewGame()
-			for len(game.Trick) < 3 {
-				hand := game.Players[game.ToPlay].Hand
-				move := Move{
-					game.ToPlay,
-					hand[rand.Intn(len(hand))],
-				}
-				_, ok := game.ValidMove(move)
-				if ok {
-					game.Play(move)
-				}
+	mick, rock := new([batchsize]FlatGame)[:], new([batchsize]FlatMove)[:]
+	for i := int16(0); i < batchsize; i++ {
+		game := NewGame()
+		for len(game.Trick) < 3 {
+			hand := game.Players[game.ToPlay].Hand
+			move := Move{
+				game.ToPlay,
+				hand[rand.Intn(len(hand))],
 			}
-			rst := game.Save()
-			side := game.ToPlay
-			bst := Card{ Clubs, Two }
-			hiscore := game.Players[side].Total + 26
-			hand := game.Players[side].Hand
-			for _, card := range(hand) {
-				m := Move{side, card}
-				_, ok := game.ValidMove(m)
-				if !ok {
-					continue
-				}
-				game.Play(m)
-				if game.Players[side].Total < hiscore {
-					hiscore = game.Players[side].Total
-					bst = card
-				}
-				game = rst
+			_, ok := game.ValidMove(move)
+			if ok {
+				game.Play(move)
 			}
-			mick = append(mick, flattenGame(&game))
-			rock = append(rock, flattenMove(Move{side, bst}))
 		}
-		err := writeToDisk(trainprefix, capacity, mick)
-		if err != nil {
-			log.Println(err)
-			return err
+		rst := game.Save()
+		side := game.ToPlay
+		bst := Card{ Clubs, Two }
+		hiscore := game.Players[side].Total + 26
+		hand := game.Players[side].Hand
+		for _, card := range(hand) {
+			m := Move{side, card}
+			_, ok := game.ValidMove(m)
+			if !ok {
+				continue
+			}
+			game.Play(m)
+			if game.Players[side].Total < hiscore {
+				hiscore = game.Players[side].Total
+				bst = card
+			}
+			game = rst
 		}
-		err = writeToDisk(targetprefix, capacity, rock)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-		log.Println("Finished iteration, moving on to iteration %d", capacity - 1)
-		capacity--
+		mick = append(mick, flattenGame(&game))
+		rock = append(rock, flattenMove(Move{side, bst}))
 	}
+	err := writeToDisk(trainprefix, capacity, mick)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	err = writeToDisk(targetprefix, capacity, rock)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println("Finished iteration %d, exiting", capacity - 1)
 	return nil
 }
 
