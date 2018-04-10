@@ -70,6 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatal("shit: ", err)
 	}*/
-	
+	flag.Parse()
 	CreateTrainingData(*trainiter)
 }

@@ -1,5 +1,5 @@
 
-for /l %%x in (987,-4,1) do (
-	rules.exe --trainter%%x
-	SLEEP 5
+for /l %%x in (986,-1,1) do (
+	rules.exe -step %%x
+	SLEEP 1
 	)

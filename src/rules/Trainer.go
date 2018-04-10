@@ -63,7 +63,7 @@ func CreateTrainingData(capacity int) error {
 		log.Println(err)
 		return err
 	}
-	log.Println("Finished iteration %d, exiting", capacity - 1)
+	log.Printf("Finished iteration %d, exiting", capacity)
 	return nil
 }
 
