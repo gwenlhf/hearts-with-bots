@@ -1,11 +1,12 @@
 package main
 
 import ( 
-	"io/ioutil"
+	"bufio"
 	"math/rand"
 	"fmt"
 	"encoding/json"
 	"log"
+	"os"
 )
 
 const filepath string = "./train/"
@@ -15,8 +16,9 @@ const batchsize int16 = 10
 type FlatGame [53][3]bool
 type FlatMove [52]bool
 
-func CreateTrainingData(capacity int) {
-	for capacity > 0 {
+
+func CreateTrainingData(capacity int) error {
+	for capacity > (capacity-5) {
 		mick, rock := new([batchsize]FlatGame)[:], new([batchsize]FlatMove)[:]
 		for i := int16(0); i < batchsize; i++ {
 			game := NewGame()
@@ -52,10 +54,20 @@ func CreateTrainingData(capacity int) {
 			mick = append(mick, flattenGame(&game))
 			rock = append(rock, flattenMove(Move{side, bst}))
 		}
-		writeToDisk(trainprefix, capacity, mick)
-		writeToDisk(targetprefix, capacity, rock)
+		err := writeToDisk(trainprefix, capacity, mick)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		err = writeToDisk(targetprefix, capacity, rock)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		log.Println("Finished iteration, moving on to iteration %d", capacity - 1)
 		capacity--
 	}
+	return nil
 }
 
 func flattenGame (game *Game) (res FlatGame) {
@@ -93,7 +105,20 @@ func writeToDisk (prefix string, id int, data interface{}) error {
 	if err != nil {
 		log.Println(err)
 	}
-	return ioutil.WriteFile(fmt.Sprintf("%s%s%d", filepath, prefix, id), jdata, 0777)
+	f, err := os.Create(fmt.Sprintf("%s%s%d", filepath, prefix, id))
+	defer f.Close()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	w := bufio.NewWriter(f)
+	_, err = w.Write(jdata)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	w.Flush()
+	return nil
 }
 
 func ( game *Game ) copyTotals () (res []int16) {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"flag"
 	"net/http"
 	"encoding/json"
 )
@@ -13,6 +14,7 @@ type GameMoveWrapper struct {
 
 type ErrorObject struct {}
 
+var trainiter = flag.Int("step", 989, "don't worry about it")
 
 func newGameHandler (w http.ResponseWriter, r *http.Request) {
 	game := NewGame()
@@ -68,5 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatal("shit: ", err)
 	}*/
-	CreateTrainingData(1000)
+	
+	CreateTrainingData(*trainiter)
 }
