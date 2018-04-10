@@ -8,23 +8,22 @@ save_path = './model/dnn/'
 def main():
 	# print(json.loads(sample_game_json))
 	game = processGame(json.loads(sample_game_json))
-	print(len(list(game)))
-	# model = Sequential()
+	model = tf.keras.Sequential()
 
-	# model.add(Dense(318, 
-	# 	input_shape=(10, 53, 3),
-	# 	activation='softmax'))
+	model.add(tf.keras.layers.Dense(318, 
+		input_shape=(10, 53, 3),
+		activation='softmax'))
 
-	# model.add(Dense(159))
+	model.add(tf.keras.layers.Dense(159))
 
-	# model.add(Dense(52))
+	model.add(tf.keras.layers.Dense(52))
 
-	# model.add(Dropout(0.5))
+	model.add(tf.keras.layers.Dropout(0.5))
 
-	# model.compile(
-	# 	optimizer='rmsprop',
-	# 	loss='binary_crossentropy',
-	# 	metrics=['accuracy'])
+	model.compile(
+		optimizer='rmsprop',
+		loss='binary_crossentropy',
+		metrics=['accuracy'])
 
 # processGame turns a Game state object
 # into a flat 2d list with the following shape:
@@ -60,7 +59,7 @@ def processGame(obj):
 
 	out = sorted(out, key=lambda v: (v["Suit"], v["Value"]))
 
-	return map(flattenCard, out)
+	return np.array(list(map(flattenCard, out)))
 
 def flattenCard(c):
 	c = defaultdict(lambda:False, c)
