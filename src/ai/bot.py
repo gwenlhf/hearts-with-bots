@@ -45,10 +45,8 @@ def processGame(obj):
 	valid = validMoves(hand, obj["Trick"], obj["HeartsBroken"])
 
 	for card in valid:
-		card["canMove"] = True
 		out.append(card)
-
-	for i in range(3):
+	for i in range(4):
 		if i == obj["ToPlay"]: continue
 		for card in obj["Players"][i]["Hand"]:
 			out.append(card)
@@ -56,7 +54,7 @@ def processGame(obj):
 	for card in out:
 		card["inPlay"] = True
 
-	for i in range(3):
+	for i in range(4):
 		for card in obj["Players"][i]["Points"]:
 			out.append(card)
 
@@ -73,20 +71,26 @@ def flattenCard(c):
 		)
 
 def validMoves(hand, trick, heartsbroken):
-	out = []
+	allClear = False
 	if len(trick) == 0:
 		if heartsbroken:
-			return hand[:]
+			allClear = True
 		else:
-			return [x for x in hand if 
-				(x["Suit"] != 2 and not 
-				(x["Suit"] == 3 and x["Value"] == 10))]
-	for card in hand:
-		if card["Suit"] == trick[0]["Suit"]:
-			out.append(card)
-	if len(out) == 0:
-		return hand[:]
-	return out
+			for card in hand:
+			 if (card["Suit"] != 2 and not
+			  	(card["Suit"] == 3 and
+			     card["Value"] == 10)):
+			 	card["canMove"] = True
+	else:
+		allClear = True
+		for card in hand:
+			if card["Suit"] == trick[0]["Suit"]:
+				card["canMove"] = True
+				allClear = False
+	if allClear:
+		for card in hand:
+			card["canMove"] = True
+	return hand
 
 if __name__ == "__main__":
 	main()
