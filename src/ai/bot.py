@@ -3,27 +3,29 @@ import json
 import numpy as np
 from example_game import sample_game_json
 from collections import defaultdict
-save_path = './model/dnn/'
+from urllib.request import urlopen
+
+save_path = './model/dnn/weights.h5'
 
 def main():
 	# print(json.loads(sample_game_json))
 	game = processGame(json.loads(sample_game_json))
+	b_games = np.tile(game, (1,10,1,1))
+	print(b_games)
+	# urlopen("localhost:8080/")
 	model = tf.keras.Sequential()
-
 	model.add(tf.keras.layers.Dense(318, 
 		input_shape=(10, 53, 3),
 		activation='softmax'))
-
 	model.add(tf.keras.layers.Dense(159))
-
 	model.add(tf.keras.layers.Dense(52))
-
 	model.add(tf.keras.layers.Dropout(0.5))
-
 	model.compile(
 		optimizer='rmsprop',
 		loss='binary_crossentropy',
 		metrics=['accuracy'])
+	model.load_weights(save_path)
+	model.predict(b_games)
 
 # processGame turns a Game state object
 # into a flat 2d list with the following shape:
@@ -53,13 +55,40 @@ def processGame(obj):
 	for card in out:
 		card["inPlay"] = True
 
+	m = 0
+	allPoints = -1
 	for i in range(4):
+		k = 0
 		for card in obj["Players"][i]["Points"]:
+			allPoints = -1
+			k += 1
+			m += 1
 			out.append(card)
-
+		if m > 0 and k == m:
+			allPoints = i
+			
 	out = sorted(out, key=lambda v: (v["Suit"], v["Value"]))
-
+	
+	xtr = []
+	if allPoints > -1:
+		if obj["ToPlay"] == allPoints:
+			xtr = (0,1,0)
+		else:
+			xtr = (1,0,0)
+	out.append(xtr)
 	return np.array(list(map(flattenCard, out)))
+
+def processMove(obj, side):
+	card = { }
+	top = np.sort(np.copy(obj))[0]
+	for i in range(len(obj)):
+		if obj[i] == top:
+			card["Suit"] = i / 13
+			card["Value"] = k % 13
+	return json.dumps({
+		"Side":side,
+		"Card":card
+	})
 
 def flattenCard(c):
 	c = defaultdict(lambda:False, c)
