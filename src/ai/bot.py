@@ -14,23 +14,24 @@ save_path = './model/dnn/weights.h5'
 training_path = './train/'
 
 def main():
-	# batchConvertTrainingJson('../rules/train')
-	# loadModel()
-	# while True:
-		# batchno = randint(1,1001)
-		# traindata = json.load(open(training_path + "mick" + batchno, 'r'))
-		# traindata = json.load(open(training_path + "rock" + batchno, 'r'))
-		# targedata = f["rocky"]
-		# model.fit()
+	model = loadModel()
+
+	traindata = np.load("%s%sdata.npz" % (training_path, "mick"))["arr_0"]
+	targedata = np.load("%s%sdata.npz" % (training_path, "rock"))["arr_0"]
+	traindata = np.reshape(traindata, (10010, 53, 3))
+	targedata = np.reshape(targedata, (10010, 52))
+
+	model.fit(traindata, targedata)
+	model.save_weights(save_path)
 
 def loadModel():
 	model = tf.keras.Sequential()
-	model.add(tf.keras.layers.Dense(318, 
-		input_shape=(10, 53, 3),
+	model.add(tf.keras.layers.Flatten(
+		input_shape=(53, 3)))
+	model.add(tf.keras.layers.Dense(2756,
 		activation='softmax'))
-	model.add(tf.keras.layers.Dense(159))
+	model.add(tf.keras.layers.Dense(689))
 	model.add(tf.keras.layers.Dense(52))
-	model.add(tf.keras.layers.Dropout(0.5))
 	model.compile(
 		optimizer='rmsprop',
 		loss='binary_crossentropy',
@@ -61,6 +62,7 @@ def batchConvertTrainingJson(traindir, num=1001):
 			targedata.close()
 	np.savez("%s%s" % (training_path, "mickdata"), mick)
 	np.savez("%s%s" % (training_path, "rockdata"), rock)
+
 # this isn't working
 # def createTrainingData(training, targets, batch_size=10, cap=1000):
 # 	while cap > 0:
