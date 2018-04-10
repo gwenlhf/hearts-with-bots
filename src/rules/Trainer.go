@@ -19,10 +19,14 @@ type FlatMove [52]bool
 
 func CreateTrainingData(capacity int) error {
 	mick, rock := new([batchsize]FlatGame)[:], new([batchsize]FlatMove)[:]
+	game := NewGame()
 	for i := int16(0); i < batchsize; i++ {
-		game := NewGame()
 		for len(game.Trick) < 3 {
 			hand := game.Players[game.ToPlay].Hand
+			if len(hand) == 0 {
+				game = NewGame()
+				continue
+			}
 			move := Move{
 				game.ToPlay,
 				hand[rand.Intn(len(hand))],

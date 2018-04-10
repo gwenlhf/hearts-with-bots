@@ -5,6 +5,8 @@ import (
 	"flag"
 	"net/http"
 	"encoding/json"
+	"math/rand"
+	"time"
 )
 
 type GameMoveWrapper struct {
@@ -70,6 +72,7 @@ func main() {
 	if err != nil {
 		log.Fatal("shit: ", err)
 	}*/
+	rand.Seed(time.Now().UnixNano())
 	flag.Parse()
 	CreateTrainingData(*trainiter)
 }
