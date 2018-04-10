@@ -54,6 +54,7 @@ func CreateTrainingData(capacity int) {
 		}
 		writeToDisk(trainprefix, capacity, mick)
 		writeToDisk(targetprefix, capacity, rock)
+		capacity--
 	}
 }
 
