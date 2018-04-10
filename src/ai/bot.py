@@ -6,65 +6,91 @@ from collections import defaultdict
 import urllib
 from random import randint
 import h5py
+import time
+from tempfile import TemporaryFile
 
 save_path = './model/dnn/weights.h5'
 
-training_path = './train/training_data.h5'
+training_path = './train/'
 
 def main():
-	f = h5py.File(training_path)
-	traindata = f["mick"]
-	targedata = f["rocky"]
-	createTrainingData(traindata, targedata)
-	# print(json.loads(sample_game_json))
-	# game = flattenGame(json.loads(sample_game_json))
-	# b_games = np.tile(game, (1,10,1,1))
-	# print(b_games)
-	# # urlopen("localhost:8080/")
-	# model = tf.keras.Sequential()
-	# model.add(tf.keras.layers.Dense(318, 
-	# 	input_shape=(10, 53, 3),
-	# 	activation='softmax'))
-	# model.add(tf.keras.layers.Dense(159))
-	# model.add(tf.keras.layers.Dense(52))
-	# model.add(tf.keras.layers.Dropout(0.5))
-	# model.compile(
-	# 	optimizer='rmsprop',
-	# 	loss='binary_crossentropy',
-	# 	metrics=['accuracy'])
-	# model.load_weights(save_path)
-	# res = model.predict(b_games)
+	# batchConvertTrainingJson('../rules/train')
+	# loadModel()
+	# while True:
+		# batchno = randint(1,1001)
+		# traindata = json.load(open(training_path + "mick" + batchno, 'r'))
+		# traindata = json.load(open(training_path + "rock" + batchno, 'r'))
+		# targedata = f["rocky"]
+		# model.fit()
 
+def loadModel():
+	model = tf.keras.Sequential()
+	model.add(tf.keras.layers.Dense(318, 
+		input_shape=(10, 53, 3),
+		activation='softmax'))
+	model.add(tf.keras.layers.Dense(159))
+	model.add(tf.keras.layers.Dense(52))
+	model.add(tf.keras.layers.Dropout(0.5))
+	model.compile(
+		optimizer='rmsprop',
+		loss='binary_crossentropy',
+		metrics=['accuracy'])
+	model.load_weights(save_path)
+	return model
 
-def createTrainingData(training, targets, batch_size=10, cap=1000):
-	while cap > 0:
-		batch_training = []
-		batch_target = []
-		for i in range(batch_size):
-			game = newGame()
-			while len(game["Trick"]) < 3:
-				valid = validMoves(game)
-				card = valid[np.random.randint(0,len(valid))]
-				try:
-					game = wrapMove(game, moveFromCard(card, game["ToPlay"]))
-				except:
-					continue
-			valid = validMoves(game)
-			bst = valid[0]
-			hiscore = 26
-			for card in valid:
-				tmp = wrapMove(game, moveFromCard(card, 3))
-				if tmp == -1:
-					continue
-				if tmp["Players"][game["ToPlay"]]["Total"] < hiscore:
-					hiscore = tmp["Players"][game["ToPlay"]]["Total"]
-					bst = card
-			batch_training[i] = flattenGame(game)
-			batch_target[i] = flattenMove(bst)
-		training[cap-1] = batch_training
-		targets[cap-1] = batch_target
-		cap -= 1
-		print("finished a batch! %d remaining to fill" % cap)
+def batchConvertTrainingJson(traindir, num=1001):
+	mick = np.empty((num, 10, 53, 3), type(True))
+	rock = np.empty((num, 10, 52), type(True))
+	for i in range(1, num):
+		trstr = "%s%s%d" % (traindir, "/mick", i)
+		tastr = "%s%s%d" % (traindir, "/rock", i)
+		try:
+			traindata = open(trstr, 'r')
+			targedata = open(tastr, 'r')
+			trdata = json.load(traindata)[10:]
+			tr = np.array(trdata)
+			mick[i-1] = tr
+			tadata = json.load(targedata)[10:]
+			ta = np.array(tadata)
+			rock[i-1] = ta
+		except Exception as e:
+			print(e)
+			continue
+		finally:
+			traindata.close()
+			targedata.close()
+	np.savez("%s%s" % (training_path, "mickdata"), mick)
+	np.savez("%s%s" % (training_path, "rockdata"), rock)
+# this isn't working
+# def createTrainingData(training, targets, batch_size=10, cap=1000):
+# 	while cap > 0:
+# 		batch_training = []
+# 		batch_target = []
+# 		for i in range(batch_size):
+# 			game = newGame()
+# 			while len(game["Trick"]) < 3:
+# 				valid = validMoves(game)
+# 				card = valid[np.random.randint(0,len(valid))]
+# 				try:
+# 					game = wrapMove(game, moveFromCard(card, game["ToPlay"]))
+# 				except:
+# 					continue
+# 			valid = validMoves(game)
+# 			bst = valid[0]
+# 			hiscore = 26
+# 			for card in valid:
+# 				tmp = wrapMove(game, moveFromCard(card, 3))
+# 				if tmp == -1:
+# 					continue
+# 				if tmp["Players"][game["ToPlay"]]["Total"] < hiscore:
+# 					hiscore = tmp["Players"][game["ToPlay"]]["Total"]
+# 					bst = card
+# 			batch_training[i] = flattenGame(game)
+# 			batch_target[i] = flattenMove(bst)
+# 		training[cap-1] = batch_training
+# 		targets[cap-1] = batch_target
+# 		cap -= 1
+# 		print("finished a batch! %d remaining to fill" % cap)
 
 
 
