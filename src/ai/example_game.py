@@ -92,6 +92,10 @@ sample_game_json = '''
           "Value": 6
         },
         {
+          "Suit": 1,
+          "Value": 6
+        },
+        {
           "Suit": 2,
           "Value": 4
         },
@@ -106,14 +110,6 @@ sample_game_json = '''
         {
           "Suit": 0,
           "Value": 5
-        },
-        {
-          "Suit": 1,
-          "Value": 6
-        },
-        {
-          "Suit": 1,
-          "Value": 6
         }
       ],
       "Points": [],
