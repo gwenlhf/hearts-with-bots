@@ -9,20 +9,20 @@ import h5py
 import time
 from tempfile import TemporaryFile
 
-save_path = './model/dnn/weights_3.h5'
+save_path = './model/dnn/weights_d2.h5'
 
 training_path = './train/'
 
 def main():
 	# batchConvertTrainingJson('../rules/train')
-	# trainModel()
-	print(predictMove(json.loads(sample_game_json)))
+	trainModel()
+	# print(predictMove(json.loads(sample_game_json)))
 
 def trainModel():
 	model = loadModel()
 
-	traindata = np.load("%s%sdata.npz" % (training_path, "mick"))["arr_0"]
-	targedata = np.load("%s%sdata.npz" % (training_path, "rock"))["arr_0"]
+	traindata = np.load("%s%sdata2.npz" % (training_path, "mick"))["arr_0"]
+	targedata = np.load("%s%sdata2.npz" % (training_path, "rock"))["arr_0"]
 	traindata = np.reshape(traindata, (10010, 53, 3))
 	targedata = np.reshape(targedata, (10010, 52))
 
@@ -44,7 +44,7 @@ def loadModel():
 		optimizer='rmsprop',
 		loss='binary_crossentropy',
 		metrics=['accuracy'])
-	model.load_weights(save_path)
+	# model.load_weights(save_path)
 	return model
 
 def signb(b):
@@ -57,14 +57,24 @@ def batchConvertTrainingJson(traindir, num=1001):
 		trstr = "%s%s%d" % (traindir, "/mick", i)
 		tastr = "%s%s%d" % (traindir, "/rock", i)
 		try:
+			valids = np.empty((10, 52), type(True))
 			vs = np.vectorize(signb)
 			traindata = open(trstr, 'r')
 			targedata = open(tastr, 'r')
 			trdata = json.load(traindata)[10:]
-			tr = vs(np.array(trdata))
+			tr = np.array(trdata)
+			for i in range(len(trdata)):
+				for j in range(len(trdata[i])):
+					if tr[i][j][0]:
+						valids[i][j] = True
+			tr = vs(tr)
 			mick[i-1] = tr
 			tadata = json.load(targedata)[10:]
 			ta = vs(np.array(tadata))
+			for i in range(len(ta)):
+				for j in range(len(ta[i])):
+					if ta[i][j] == -1 and valids[i][j]:
+						ta[i][j] = 0
 			rock[i-1] = ta
 		except Exception as e:
 			print(e)
@@ -72,8 +82,8 @@ def batchConvertTrainingJson(traindir, num=1001):
 		finally:
 			traindata.close()
 			targedata.close()
-	np.savez("%s%s" % (training_path, "mickdata"), mick)
-	np.savez("%s%s" % (training_path, "rockdata"), rock)
+	np.savez("%s%s" % (training_path, "mickdata2"), mick)
+	np.savez("%s%s" % (training_path, "rockdata2"), rock)
 
 # this isn't working
 # def createTrainingData(training, targets, batch_size=10, cap=1000):
