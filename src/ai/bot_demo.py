@@ -19,12 +19,10 @@ def main():
 
 def trainModel():
 	model = loadModel()
-
 	traindata = np.load("%s%sdata2.npz" % (training_path, "mick"))["arr_0"]
 	targedata = np.load("%s%sdata2.npz" % (training_path, "rock"))["arr_0"]
 	traindata = np.reshape(traindata, (10010, 53, 3))
 	targedata = np.reshape(targedata, (10010, 52))
-
 	model.fit(traindata, targedata, batch_size=10, epochs=1)
 	model.save_weights(save_path)
 

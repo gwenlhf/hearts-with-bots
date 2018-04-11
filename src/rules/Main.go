@@ -16,7 +16,7 @@ type GameMoveWrapper struct {
 
 type ErrorObject struct {}
 
-var trainiter = flag.Int("step", 989, "don't worry about it")
+// var trainiter = flag.Int("step", 989, "don't worry about it")
 
 func newGameHandler (w http.ResponseWriter, r *http.Request) {
 	game := NewGame()
@@ -66,13 +66,13 @@ func gameMoveHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	/*http.HandleFunc("/new", newGameHandler)
 	http.HandleFunc("/mov", gameMoveHandler)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("shit: ", err)
 	}*/
-	rand.Seed(time.Now().UnixNano())
-	flag.Parse()
-	CreateTrainingData(*trainiter)
+	// flag.Parse()
+	// CreateTrainingData(*trainiter)
 }
