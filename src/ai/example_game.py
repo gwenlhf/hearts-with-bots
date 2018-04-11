@@ -139,10 +139,6 @@ sample_game_json = '''
           "Value": 11
         },
         {
-          "Suit": 0,
-          "Value": 6
-        },
-        {
           "Suit": 3,
           "Value": 5
         },
@@ -191,10 +187,6 @@ sample_game_json = '''
         },
         {
           "Suit": 0,
-          "Value": 12
-        },
-        {
-          "Suit": 0,
           "Value": 4
         },
         {
@@ -238,9 +230,17 @@ sample_game_json = '''
     {
       "Suit": 0,
       "Value": 0
+    },
+     {
+          "Suit": 0,
+          "Value": 6
+    },
+    {
+          "Suit": 0,
+          "Value": 12
     }
   ],
   "HeartsBroken": false,
-  "ToPlay": 2
+  "ToPlay": 0
 }
 '''

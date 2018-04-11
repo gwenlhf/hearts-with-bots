@@ -9,14 +9,14 @@ import h5py
 import time
 from tempfile import TemporaryFile
 
-save_path = './model/dnn/weights_d2.h5'
+save_path = './model/dnn/weights_d3.h5'
 
 training_path = './train/'
 
 def main():
 	# batchConvertTrainingJson('../rules/train')
-	trainModel()
-	# print(predictMove(json.loads(sample_game_json)))
+	# trainModel()
+	print(predictMove(json.loads(sample_game_json)))
 
 def trainModel():
 	model = loadModel()
@@ -26,7 +26,7 @@ def trainModel():
 	traindata = np.reshape(traindata, (10010, 53, 3))
 	targedata = np.reshape(targedata, (10010, 52))
 
-	model.fit(traindata, targedata, batch_size=10, epochs=50)
+	model.fit(traindata, targedata, batch_size=10, epochs=1)
 	model.save_weights(save_path)
 
 def loadModel():
@@ -44,7 +44,7 @@ def loadModel():
 		optimizer='rmsprop',
 		loss='binary_crossentropy',
 		metrics=['accuracy'])
-	# model.load_weights(save_path)
+	model.load_weights(save_path)
 	return model
 
 def signb(b):
