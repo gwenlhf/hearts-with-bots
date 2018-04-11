@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-
+import { Suit, Value } from './game.constants'
 @Pipe({
   name: 'unicardf'
 })
@@ -7,7 +7,8 @@ export class UnicardfPipe implements PipeTransform {
   transform(value: number): string {
   	var uoffset = 126976;
     var valv = value % 13;
-    var suitv = value / 13;
+    valv = (valv == Value.Ace) ? 1 : valv + 2;
+    var suitv = Math.floor(value / 13);
     switch (suitv) {
     	case Suit.Spades:
     		suitv = 10*16;

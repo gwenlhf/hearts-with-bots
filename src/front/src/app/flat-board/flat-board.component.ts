@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UnicardfPipe } from '../unicardf.pipe'
+import { UnicardfPipe } from '../unicardf.pipe';
+import { RulesService } from '../rules.service';
 
 @Component({
   selector: 'app-flat-board',
@@ -8,9 +9,11 @@ import { UnicardfPipe } from '../unicardf.pipe'
 })
 export class FlatBoardComponent implements OnInit {
 	weights : number[];
-  constructor() { }
+  constructor(private rulesService: RulesService) { }
 
   ngOnInit() {
+  	this.rulesService.getNewGameFlat()
+  		.subscribe(weights => this.weights = weights);
   }
 
 }
