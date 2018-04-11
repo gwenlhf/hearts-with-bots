@@ -14,7 +14,6 @@ save_path = './model/dnn/weights_d3.h5'
 training_path = './train/'
 
 def main():
-	# batchConvertTrainingJson('../rules/train')
 	# trainModel()
 	print(predictMove(json.loads(sample_game_json)))
 
@@ -253,7 +252,8 @@ def predictMove(game, model=loadModel()):
 	ia = np.empty((10,53,3))
 	ia[0] = flattenGame(game)
 	fm = model.predict(ia, batch_size=10)
-	return unflattenMove(fm[0], s)
+	return fm[0]
+	# return unflattenMove(fm[0], s)
 
 if __name__ == "__main__":
 	main()
