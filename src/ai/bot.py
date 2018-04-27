@@ -9,7 +9,7 @@ import h5py
 import time
 from tempfile import TemporaryFile
 
-save_path = './model/dnn/weights_4.h5'
+save_path = './model/dnn/weights_3.h5'
 
 training_path = './train/'
 
@@ -33,15 +33,10 @@ def loadModel():
 	model = tf.keras.Sequential()
 	model.add(tf.keras.layers.InputLayer(batch_input_shape=(10,53,3)))
 	model.add(tf.keras.layers.Flatten())
-	model.add(tf.keras.layers.Dense(11024,
+	model.add(tf.keras.layers.Dense(2756,
 		activation='softmax'))
-	model.add(tf.keras.layers.Dense(5512))
 	model.add(tf.keras.layers.Dense(2756))
-	model.add(tf.keras.layers.Dense(1378))
-	model.add(tf.keras.layers.Dense(1378))
-	model.add(tf.keras.layers.Dense(1378))
-	model.add(tf.keras.layers.Dense(1378))
-	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(2756))
 	model.add(tf.keras.layers.Dense(689))
 	model.add(tf.keras.layers.Dense(52))
 	model.add(tf.keras.layers.Dropout(0.5))

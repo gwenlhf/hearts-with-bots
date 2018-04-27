@@ -1,0 +1,8 @@
+
+The source code (430MB) is available on Github:
+
+https://github.com/eaddae/hearts-with-bots
+
+The presentation (Google Slides) is available here: 
+
+https://docs.google.com/presentation/d/1wQoefEmN7jUDn8uD-0FtPzAezPKSr7cs1o6nHwlB14o/edit?usp=sharing
