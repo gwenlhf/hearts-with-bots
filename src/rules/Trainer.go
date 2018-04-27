@@ -1,3 +1,5 @@
+// Trainer.go exists to create files of training and target data
+// for a neural network designed to interact with the game logic in Hearts.go.
 package main
 
 import ( 
@@ -16,8 +18,10 @@ const batchsize int16 = 10
 type FlatGame [53][3]bool
 type FlatMove [52]bool
 
-
-func CreateTrainingData(capacity int) error {
+// CreateTrainingData creates a pair of training/target data as files on disk.
+// The files will contain (batchsize) examples; the training set uses FlatGame,
+// and the target set uses FlatMove.
+func CreateTrainingData(suffix int) error {
 	mick, rock := new([batchsize]FlatGame)[0:0], new([batchsize]FlatMove)[0:0]
 	game := NewGame()
 	for i := int16(0); i < batchsize; i++ {
@@ -57,20 +61,21 @@ func CreateTrainingData(capacity int) error {
 		mick = append(mick, flattenGame(&game))
 		rock = append(rock, flattenMove(Move{side, bst}))
 	}
-	err := writeToDisk(trainprefix, capacity, mick)
+	err := writeToDisk(trainprefix, suffix, mick)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
-	err = writeToDisk(targetprefix, capacity, rock)
+	err = writeToDisk(targetprefix, suffix, rock)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
-	log.Printf("Finished iteration %d, exiting", capacity)
+	log.Printf("Finished iteration %d, exiting", suffix)
 	return nil
 }
 
+// flattenGame turns a Game into a FlatGame.
 func flattenGame (game *Game) (res FlatGame) {
 	for _, c := range(game.Trick) {
 		res[c.flatIdx()] = [3]bool{false,true,false}
@@ -92,15 +97,18 @@ func flattenGame (game *Game) (res FlatGame) {
 	return
 }
 
+// flattenMove turns a Move into a FlatMove.
 func flattenMove (move Move) (res FlatMove) {
 	res[move.Card.flatIdx()] = true
 	return
 }
 
+// flatIdx returns the index of a FlatGame that represents some Card.
 func ( card *Card ) flatIdx () int {
 	return (int(card.Suit) * 13 + int(card.Value))
 }
 
+// writeToDisk wraps the boilerplate needed to write a struct to a new file.
 func writeToDisk (prefix string, id int, data interface{}) error {
 	jdata, err := json.Marshal(data)
 	if err != nil {
@@ -129,6 +137,7 @@ func ( game *Game ) copyTotals () (res []int16) {
 	return
 }
 
+// Save is used to copy a Game into a new struct, so the state can be rewound.
 func ( game *Game ) Save () (g Game) {
 	g = NewGame()
 	for i, p := range(game.Players) {
