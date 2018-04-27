@@ -9,14 +9,14 @@ import h5py
 import time
 from tempfile import TemporaryFile
 
-save_path = './model/dnn/weights_3.h5'
+save_path = './model/dnn/weights_demo.h5'
 
 training_path = './train/'
 
 def main():
 	# batchConvertTrainingJson('../rules/train')
-	trainModel()
-	# print(predictMove(json.loads(sample_game_json)))
+	# trainModel()
+	print(predictMove(json.loads(sample_game_json)))
 
 def trainModel():
 	model = loadModel()
@@ -33,10 +33,15 @@ def loadModel():
 	model = tf.keras.Sequential()
 	model.add(tf.keras.layers.InputLayer(batch_input_shape=(10,53,3)))
 	model.add(tf.keras.layers.Flatten())
-	model.add(tf.keras.layers.Dense(2756,
+	model.add(tf.keras.layers.Dense(11024,
 		activation='softmax'))
+	model.add(tf.keras.layers.Dense(5512))
 	model.add(tf.keras.layers.Dense(2756))
-	model.add(tf.keras.layers.Dense(2756))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
+	model.add(tf.keras.layers.Dense(1378))
 	model.add(tf.keras.layers.Dense(689))
 	model.add(tf.keras.layers.Dense(52))
 	model.add(tf.keras.layers.Dropout(0.5))
@@ -44,7 +49,7 @@ def loadModel():
 		optimizer='rmsprop',
 		loss='binary_crossentropy',
 		metrics=['accuracy'])
-	# model.load_weights(save_path)
+	model.load_weights(save_path)
 	return model
 
 def signb(b):

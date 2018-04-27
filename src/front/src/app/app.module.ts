@@ -8,6 +8,9 @@ import { GameboardComponent } from './gameboard/gameboard.component';
 import { GameCardComponent } from './game-card/game-card.component';
 import { GameSidePipe } from './game-side.pipe';
 import { UnicardPipe } from './unicard.pipe';
+import { FlatBoardComponent } from './flat-board/flat-board.component';
+import { UnicardfPipe } from './unicardf.pipe';
+import { HeatclassPipe } from './heatclass.pipe';
 
 
 @NgModule({
@@ -16,7 +19,10 @@ import { UnicardPipe } from './unicard.pipe';
     GameboardComponent,
     GameCardComponent,
     GameSidePipe,
-    UnicardPipe
+    UnicardPipe,
+    FlatBoardComponent,
+    UnicardfPipe,
+    HeatclassPipe
   ],
   imports: [
     BrowserModule
