@@ -1,4 +1,4 @@
-# HeartsWithBots: a (pretty terrible) Neural Network experiment
+# HeartsWithBots: a Neural Network experiment
 HeartsWithBots is a neural network project gone awry, here for the world to see, and hopefully learn from.
 
 ## Quick-Start
@@ -18,7 +18,7 @@ go run Main.go Hearts.go Trainer.go
 and then navigate your browser to `http://localhost:8080/new`.
 
 ## Architecture
-HeartsWithBots combines an Angular frontend with pre-generated JSON that could theoretically have come from a Golang "rules" service and a Python "AI" service. Also included are the batch files used in conjunction with the Golang service to generate the target/training data, located in raw JSON form under `./src/rules/train/`.
+HeartsWithBots combines an Angular frontend with JSON output from a Golang rules service and a Python AI service. Also included are the batch files used in conjunction with the Golang service to generate the target/training data, located in raw JSON form under `./src/rules/train/`.
 
 The Python AI (`./src/ai/`) has methods for training the AI, as well as providing prediction data for a given game state.
 
@@ -58,14 +58,14 @@ All of these objects are shared between Angular, Python, and Golang. For the neu
 
 The neural network output is a 1d-array of type `float[52]`, with higher values predicting fewer points taken for the player if the card is selected.
 
-## The (Mercifully) Abridged History of HeartsWithBots
+## The Abridged History of HeartsWithBots
 The original idea behind HeartsWithBots was a website. Specifically, a website where you could play Hearts against an intelligent AI, yes, but also against a human opponent, and a bot that picked moves at random. After the game, the human players would be asked to pick which player was which, as a sort of mini-Turing test.
 
-To make a long story short, that turned out to be harder than I (should have) anticipated.
+To make a long story short, that turned out to be harder than I anticipated.
 
-Working towards this perhaps-misguided end goal, development time was split between all three parts (the frontend, the rules engine, and the AI component), and the output quality was proportionally diminished. What sounded like a simple project on paper quickly turned into development hell -- splitting the logic into different components sounded great, but integrating them involved a lot of code duplication, which lead to more bugs, which lead to the project iterations taking far longer than expected, which lead to what you see here.
+Working towards this goal, development time was split between all three parts (the frontend, the rules engine, and the AI component), and the output quality was proportionally diminished. What sounded like a simple project on paper quickly turned into development hell -- splitting the logic into different components sounded great, but integrating them involved a lot of code duplication, which lead to more bugs, which lead to the project iterations taking far longer than expected, which lead to what you see here.
 
-The end result is a neural network with a whopping 57% accuracy rating against a set of training data that's most likely useless, a rules engine that hasn't been fully tested, and a frontend which, despite looking great and taking the least amount of time to develop, is relegated to displaying static sample data.
+The end result is a neural network with a 57% accuracy rating against a set of training data that has flaws, a rules engine that hasn't been fully tested, and a frontend which, despite looking great and taking the least amount of time to develop, can only display static sample data.
 
 I have spent enough time on this project to recognize that it needs to be rewritten, but it will be a long time before I'm ready to sit down and go through it all again. The project was, however, a wonderful introduction to neural networks, and I learned a great deal about the subject in the process of building it. Had I spent less time on the integration and architecture, and more time developing a cohesive set of training data, I have little doubt that this project would have achieved greater success.
 
